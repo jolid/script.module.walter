@@ -1,0 +1,44 @@
+[B]Version 0.3.7[/B]
+fix missing table rw_stream_list
+
+[B]Version 0.3.6[/B]
+BETA 3
+
+[B]Version 0.3.4[/B]
+-Metadata
+-Custom Trakt Lists
+
+[B]Version 0.3.1[/B]
+-Bug fixes
+-SQLite
+-Upgrade
+-WarezTuga
+
+[B]Version 0.3.0[/B]
+-Live browsing
+-Independent DB integration
+-Trakt, IMDB watchlists
+-Furk
+
+[B]Version 0.1.8[/B]
+Debugging
+
+[B]Version 0.1.7[/B]
+-Fixed the issues subtitles. 
+-Added Tratk.tv trending/recommened lists for tv shows. Still need to finish movies
+-Changed the search behavior to return a folder results for multiple adds
+-Added a couple sort features for the link results, sort by host or by view count
+-Added a local election system. TRW keeps track of the most popular mirror and picks it by default.
+-I think I fixed the service errors for the autoupdater and maude with windows
+-fixed billionuploads again
+
+[B]Version 0.1.5[/B]
+-Incremental update fix
+
+[B]Version 0.1.4[/B]
+-Disabled billionuploads capcha check
+
+[B]Version 0.1.3[/B]
+- Initial Beta Release.
+[B]Version 0.0.1[/B]
+- Initial Release.
