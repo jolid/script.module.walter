@@ -1,5 +1,19 @@
 <settings>
 	<category label="General">
 		<setting id="enable-caching" type="bool" label="Enable Caching Service" default="true"/>
+		<setting id="autorename-files" type="bool" label="Rename Files" default="true" enable="!eq(-1,false)"/>
+		<setting id="polling-delay" type="enum" values="10|15|30|45|60" label="Polling Delay (s)" default="0" enable="!eq(-2,false)"/>
+		<!--<setting id="enable-pre-caching" type="bool" label="Enable Mulit-Thread Streaming" default="false"/>-->
+		<setting id="pre-caching-mb" type="enum" values="15|25|35|50|75" label="Pre-Cache MB" default="0" enable="!eq(-3,false)"/>
+		<setting id="pre-caching-segments" type="enum" values="5|8|10|15|20" label="Caching Segments" default="2" enable="!eq(-4,false)"/>	
+		<setting id="max-cache-threads" type="enum" values="1|2|3|4|5|6|7|8|9|10" label="Maxium threads" default="0" enable="!eq(-5,false)"/>
+	</category>
+	<category label="Directories">
+		<setting id="cache_temp_custom_directory" type="bool" label="Use custom directory" default="false"/>
+		<setting id="cache_temp_directory" type="folder" label="   Temporary cache" default="" enable="!eq(-1,false)"/>
+		<setting id="cache_tvshow_custom_directory" type="bool" label="Use custom directory" default="false"/>
+		<setting id="cache_tvshow_directory" type="folder" label="   TV show cache" default="" enable="!eq(-1,false)"/>
+		<setting id="cache_movie_custom_directory" type="bool" label="Use custom directory" default="false"/>
+		<setting id="cache_movie_directory" type="folder" label="   Movie cache" default="" enable="!eq(-1,false)"/>
 	</category>
 </settings>

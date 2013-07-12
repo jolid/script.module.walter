@@ -1,4 +1,4 @@
-import os
+import os,re
 IGNORE_UNIQUE_ERRORS = True
 SILENT_STATEMENTS = True
 DATABASE_VERSION = 1
@@ -39,16 +39,16 @@ class DatabaseClass:
 		self.DBH = database.connect(self.db_file)
 		self.DBC = self.DBH.cursor()
 		try:		
-			row = self.query("SELECT version, (version < ?) AS outdated FROM rw_version ORDER BY version DESC LIMIT 1", [DATABASE_VERSION])
+			row = self.query("SELECT version, (version < ?) AS outdated FROM wt_version ORDER BY version DESC LIMIT 1", [DATABASE_VERSION])
 			outdated = str2bool(str(row[1]))
 			if outdated:
 				print "Database outdated"
 				self._create_db()
-				'''print "Upgrading database"
+				print "Upgrading database"
 				for v in range(row[0]+1, DATABASE_VERSION+1):
-					upgrade_file = "upgrade.sqlite.%s.sql" % str(v)
+					upgrade_file = "upgrade.%s.sql" % str(v)
 					self.runSQLFile(upgrade_file)
-				self.commit()'''
+				self.commit()
 				
 			print "Database version: " + str(DATABASE_VERSION)
 		except:
