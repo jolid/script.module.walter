@@ -6,22 +6,26 @@ from databaseconnector import DatabaseClass
 addon = Addon('script.module.walter')
 addon_path = addon.get_path()
 profile_path = addon.get_profile()
-
+from metahandler import metahandlers
 from donnie.settings import Settings
 reg = Settings(['script.module.walter'])
+cTime=0
+tTime=0
 
 class WPlayer (xbmc.Player):
 	def __init__ (self,  *args):
 		xbmc.Player.__init__(self)
 		pass
 
-	def play(self, url, listitem, seekTime=0, strm=False):
+	def play(self, url, listitem, seekTime=0, strm=False, metadata=None):
 		self._seek = seekTime
+		self.metadata=metadata
+		self._tTime=0
+		self._cTime=0
 		if strm:
 			xbmcplugin.setResolvedUrl(int(sys.argv[ 1 ]),True,listitem)
 		else:
              		xbmc.Player(xbmc.PLAYER_CORE_AUTO).play(url, listitem)
-		
 
 	def isplaying(self):
         	xbmc.Player.isPlaying(self)
@@ -33,19 +37,34 @@ class WPlayer (xbmc.Player):
 	def onPlayBackEnded(self):
 		global profile_path
 		print "Now imNow imEnded "
-		if reg.getBoolSetting('enable-pre-caching'):
+		try:
+			META = metahandlers.MetaData()
+			META.change_watched(self.metadata['video_type'], self.metadata['title'], self.metadata['imdb_id'], season=self.metadata['season'], episode=self.metadata['episode'], year='', watched=7)
+		except:
+			pass
+		'''if reg.getBoolSetting('enable-pre-caching'):
 			dialog = xbmcgui.Dialog()
 			if dialog.yesno("Delete Cache?","Do you want to delete the cache file?"):
 				cache_file = os.path.join(xbmc.translatePath(profile_path + '/cache'), 'mtstrm.avi')
-				os.remove(cache_file)
+				os.remove(cache_file)'''
 	def onPlayBackStopped(self):
 		global profile_path
+		global cTime
+		global tTime
 		print "Now im Stopped "
-		if reg.getBoolSetting('enable-pre-caching'):
+		try:
+			percent = cTime * 100 / tTime
+			if percent > 85:
+				META = metahandlers.MetaData()
+				META.change_watched(self.metadata['video_type'], self.metadata['title'], self.metadata['imdb_id'], season=self.metadata['season'], episode=self.metadata['episode'], year='', watched=7)
+		except:
+			pass
+
+		'''if reg.getBoolSetting('enable-pre-caching'):
 			dialog = xbmcgui.Dialog()
 			if dialog.yesno("Delete Cache?","Do you want to delete the cache file?"):
 				cache_file = os.path.join(xbmc.translatePath(profile_path + '/cache'), 'mtstrm.avi')
-				os.remove(cache_file)
+				os.remove(cache_file)'''
 
 
 class QueueClass:
@@ -121,11 +140,12 @@ class QueueClass:
 	
 
 class StreamClass:
-	def __init__(self, url='', title='', info='', hashid='', hashstring=''):
+	def __init__(self, url='', title='', info='', hashid='', hashstring='', metadata=''):
 		global profile_path
 		self.url = url
 		self.title = title
 		self.info = info
+		self.metadata=metadata
 		print "Haststring %s" % hashstring
 		if hashstring:
 			hashid = self.gethash(hashstring)
@@ -147,6 +167,8 @@ class StreamClass:
 
 
 	def play(self, strm=False):
+		global cTime
+		global tTime
 		wp = WPlayer()
 		seekTime = 0
 		if not reg.getBoolSetting('enable-pre-caching'):
@@ -192,7 +214,7 @@ class StreamClass:
 			strm=False	
 
 
-		wp.play(self.url, listitem, seekTime, strm=strm)
+		wp.play(self.url, listitem, seekTime, strm=strm, metadata=self.metadata)
 		currentTime = 0
  		try:
         		tTime = wp.getTotalTime()
