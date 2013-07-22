@@ -38,8 +38,7 @@ class WPlayer (xbmc.Player):
 		global profile_path
 		print "Now imNow imEnded "
 		try:
-			META = metahandlers.MetaData()
-			META.change_watched(self.metadata['video_type'], self.metadata['title'], self.metadata['imdb_id'], season=self.metadata['season'], episode=self.metadata['episode'], year='', watched=7)
+			self.markWatched(self.metadata['video_type'], self.metadata['title'], self.metadata['imdb_id'], season=self.metadata['season'], episode=self.metadata['episode'])
 		except:
 			pass
 		'''if reg.getBoolSetting('enable-pre-caching'):
@@ -54,9 +53,8 @@ class WPlayer (xbmc.Player):
 		print "Now im Stopped "
 		try:
 			percent = cTime * 100 / tTime
-			if percent > 85:
-				META = metahandlers.MetaData()
-				META.change_watched(self.metadata['video_type'], self.metadata['title'], self.metadata['imdb_id'], season=self.metadata['season'], episode=self.metadata['episode'], year='', watched=7)
+			if percent > 90:
+				self.markWatched(self.metadata['video_type'], self.metadata['title'], self.metadata['imdb_id'], season=self.metadata['season'], episode=self.metadata['episode'])
 		except:
 			pass
 
@@ -66,6 +64,14 @@ class WPlayer (xbmc.Player):
 				cache_file = os.path.join(xbmc.translatePath(profile_path + '/cache'), 'mtstrm.avi')
 				os.remove(cache_file)'''
 
+
+	def markWatched(self, media_type, title, imdb_id, season='', episode='', year=''):
+		try:
+			META = metahandlers.MetaData()
+			META.change_watched(media_type, title, imdb_id, season=season, episode=episode, year=year, watched=7)	
+		except Exception, e:
+			print "******* Walter Error: %s" % e
+		
 
 class QueueClass:
 	def __init__(self):
@@ -226,12 +232,12 @@ class StreamClass:
             		print 'Error grabbing video time: %s' % e
             		return False
 
-    		while(True):
+    		while(wp.isplaying()):
         		try:
 				tTime = wp.getTotalTime()
             			cTime = wp.getTime()
         		except Exception:
-            			break
+           			break
         		xbmc.sleep(1000)
 		try:
     			percent = int(cTime * 100 / tTime )
