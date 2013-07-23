@@ -231,14 +231,14 @@ class StreamClass:
  		try:
         		tTime = wp.getTotalTime()
     		except Exception:
-        		xbmc.sleep(5000)
+        		xbmc.sleep(2000)
         	try:
             		tTime = wp.getTotalTime()
         	except Exception, e:
             		print 'Error grabbing video time: %s' % e
             		return False
 
-    		while(wp.isplaying()):
+    		while(True):
         		try:
 				tTime = wp.getTotalTime()
             			cTime = wp.getTime()
