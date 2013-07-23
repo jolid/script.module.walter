@@ -109,23 +109,37 @@ class CachingClass:
 		state = fp.read()
 		fp.close()
 		return state'''
+
+
 	
 	def check_state(self):
+		#print "Abort?"
+		if os.path.exists(self.abort_file):
+			#print "Yes"
+			self.Health=False
+			return False
+		#print "No"
 		return self.Healthy
 
 	def _monitor(self):
 		while not self.Done:
 			#print self.check_state()
 			if not self.check_state():
-				print "Aborting workers"
-				self.Pool.dismissWorkers(self.threads, do_join=True)
-				print "Waiting for workers to abort..."
-				self.Done = True
-				self.Aborted = True
+				self.AbortAll()
 				break
+			#print  "Dont abort"
 			#print "update state"
 			self.update_state(self.qid, self._cached, self.total_bytes, self._active_threads)
 			xbmc.sleep(10000)
+
+
+	def AbortAll(self):
+		print "Aborting workers"
+		self.Pool.dismissWorkers(self.threads, do_join=False)
+		#print "Waiting for workers to abort..."
+		self.Done = True
+		self.Aborted = True
+		shutil.rmtree(self.output_path, True)
 
 	def _download(self, url, p):
 		if not self.check_state():
@@ -231,6 +245,7 @@ class CachingClass:
 		self.url = url
 		self.name = name
 		self.uuid = str(uuid.uuid4())
+		self.abort_file = os.path.join(xbmc.translatePath(self.cache_root + '/' + self.uuid), 'abort')
 		self.Aborted = False
 		self.Healthy = True
 		self.cache_path = os.path.join(xbmc.translatePath(self.cache_root  + '/' + self.uuid), '')
@@ -242,7 +257,7 @@ class CachingClass:
 			self.DB.commit()
 			return False
 		self.Pool = ThreadPool(self.threads)		
-		self.DB.execute("UPDATE wt_download_queue set status=1 WHERE url=?", [url])
+		self.DB.execute("UPDATE wt_download_queue set folder=?, status=1 WHERE url=?", [self.uuid, url])
 		self.DB.commit()
 
 		monitor = Thread(target=self._monitor)

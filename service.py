@@ -84,8 +84,7 @@ class Walter:
 			os.makedirs(dir_path)
 
 if __name__ == '__main__':
-	#Wp = Thread(target=WalterProxy)
-	#Wp.start()
+	filename = None
 	Wt = Walter()
 	xbmc.log("Walter Caching Service starting...")
 	xbmc.log("Marking abandoned jobs as failed.")
@@ -97,16 +96,18 @@ if __name__ == '__main__':
 			break
 		row = Wt.DB.query("SELECT * FROM wt_download_queue WHERE status=0 ORDER BY num ASC LIMIT 1")
 		if row:
-			#pass
 			Ca = CachingClass(Wt.cache_root, Wt.DB)
-			filename = Ca.Cache(row[0], row[2], row[3], media=row[1], folder=row[5])
-			#DoIt = StoppableThread(target=Ca.Cache(row[0], row[2], row[3], media=row[1], folder=row[5]))
-			#DoIt.start()
-			#DoIt.join()
+			try:
+				filename = Ca.Cache(row[0], row[2], row[3], media=row[1], folder=row[5])
+			except Exception, e:
+				Ca = CachingClass(Wt.cache_root, Wt.DB)
+				filename = None
+
 			if filename:
 				Wt.notify('Cache Complete', filename)
 			else:
 				Wt.notify('Caching Error', 'Check the log for details.')
+			filename = None
 
 		xbmc.sleep(POLLING_DELAY * 1000)
 	#Wp = None

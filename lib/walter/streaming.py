@@ -92,8 +92,14 @@ class QueueClass:
 
 	def Cancel(self, qid):
 		# Implement Stop command here
+		row = self.DB.query("SELECT folder FROM wt_download_queue WHERE qid=?", [qid])
+		uuid = row[0]
+		abort_file = os.path.join(xbmc.translatePath(profile_path + 'cache/' + uuid), 'abort')
+		fp = open(abort_file, 'w')
+		fp.close()
 		self.DB.execute("UPDATE wt_download_queue SET status=-1 WHERE qid=?", [qid])
-		#self.DB.commit()
+		self.DB.commit()
+		xbmc.executebuiltin("Container.Refresh")
 
 	def clearFailed(self):
 		self.DB.execute("DELETE FROM wt_download_queue WHERE status=3 or status=-1")
