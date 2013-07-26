@@ -92,7 +92,7 @@ class QueueClass:
 
 	def Cancel(self, qid):
 		# Implement Stop command here
-		row = self.DB.query("SELECT folder FROM wt_download_queue WHERE qid=?", [qid])
+		row = self.DB.query("SELECT uuid FROM wt_download_queue WHERE qid=?", [qid])
 		uuid = row[0]
 		abort_file = os.path.join(xbmc.translatePath(profile_path + 'cache/' + uuid), 'abort')
 		fp = open(abort_file, 'w')

@@ -139,7 +139,9 @@ class CachingClass:
 		#print "Waiting for workers to abort..."
 		self.Done = True
 		self.Aborted = True
-		shutil.rmtree(self.output_path, True)
+		self.update_state(-1, 0, 0, 0)
+		#shutil.rmtree(self.output_path, True)
+		os.remove(self.output_file)
 
 	def _download(self, url, p):
 		if not self.check_state():
@@ -257,7 +259,7 @@ class CachingClass:
 			self.DB.commit()
 			return False
 		self.Pool = ThreadPool(self.threads)		
-		self.DB.execute("UPDATE wt_download_queue set folder=?, status=1 WHERE url=?", [self.uuid, url])
+		self.DB.execute("UPDATE wt_download_queue set uuid=?, status=1 WHERE url=?", [self.uuid, url])
 		self.DB.commit()
 
 		monitor = Thread(target=self._monitor)
